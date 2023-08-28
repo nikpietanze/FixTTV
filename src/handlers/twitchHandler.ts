@@ -1,4 +1,9 @@
+import { SettingsHTML } from "../settings";
+import '../css/settings.scss';
+
 export function handleTwitch(url: URL, badChannels: string[]) {
+    setSettings();
+
     // homepage
     if (url.pathname === "/") {
         try {
@@ -41,6 +46,57 @@ export function handleTwitch(url: URL, badChannels: string[]) {
         };
     };
 };
+
+function setSettings() {
+    const dropdownSettings = document.querySelector(".fixttv-settings");
+    if (dropdownSettings) {
+        return;
+    };
+
+    const avatar = document.querySelector(".tw-image-avatar");
+
+    if (!avatar) {
+        setTimeout(setSettings, 500);
+        return;
+    };
+
+    avatar.addEventListener("click", () => {
+        const menuWatcher = setInterval(() => {
+            const simplebarContent = document.querySelector(".user-menu-dropdown__main-menu .simplebar-content");
+
+            if (simplebarContent) {
+                const largeLayoutContainer = simplebarContent.childNodes[0].childNodes[0];
+
+                if (largeLayoutContainer) {
+                    const fixTTVSettings= document.createElement("div");
+                    fixTTVSettings.classList.add("fixttv-settings");
+                    fixTTVSettings.innerHTML = `
+                        <a href="#" data-a-target="fixttv-settings">
+                            <div class="icon">
+                                <img src="" alt="FixTTV" />
+                            </div>
+                            <div class="label">FixTTV Settings</div>
+                        </a>
+                    `;
+                    largeLayoutContainer.appendChild(fixTTVSettings);
+
+                    clearInterval(menuWatcher);
+
+                    fixTTVSettings.addEventListener("click", () => {
+                        openSettings();
+                    });
+                };
+            };
+        }, 500);
+    });
+};
+
+function openSettings() {
+    const settings = document.createElement("div");
+    settings.classList.add("fixttv-settings-panel");
+    settings.innerHTML = SettingsHTML;
+    document.body.appendChild(settings);
+}
 
 function parseVideoPlayer(badChannels: string[]) {
     const videoPlayer: HTMLDivElement = document.querySelector(".video-player");
